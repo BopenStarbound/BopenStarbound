@@ -1,6 +1,7 @@
-# OpenStarbound
+# BopenStarbound
 
-This is a fork of Starbound. Contributions are welcome!
+This is a fork of OpenStarbound that sacrifices backwards compatibility with vanilla.
+Contributions are welcome!
 You **must** own a copy of Starbound to use it. Base game assets are not provided for obvious reasons.
 
 It is still **work-in-progress**.
