@@ -117,7 +117,7 @@ bool TileDrawer::produceTerrainDrawables(Drawables& drawables,
   if (materialRenderProfile) {
     occlude = materialRenderProfile->occludesBehind;
     auto materialColorVariant = materialRenderProfile->colorVariants > 0 ? colorVariant % materialRenderProfile->colorVariants : 0;
-    uint32_t variance = staticRandomU32(renderData.geometry.xwrap(pos[0]) + offset[0], pos[1] + offset[1], (int)variantLayer.value(terrainLayer), "main");
+    uint32_t variance = staticRandomU32(renderData.geometry.xwrap(pos[0]) + offset[0], renderData.geometry.ywrap(pos[1]) + offset[1], (int)variantLayer.value(terrainLayer), "main");
     auto& drawList = drawables[materialZLevel(materialRenderProfile->zLevel, material, materialHue, materialColorVariant)];
 
     MaterialPieceResultList pieces;
@@ -138,7 +138,7 @@ bool TileDrawer::produceTerrainDrawables(Drawables& drawables,
 
   if (modRenderProfile) {
     auto modColorVariant = modRenderProfile->colorVariants > 0 ? colorVariant % modRenderProfile->colorVariants : 0;
-    uint32_t variance = staticRandomU32(renderData.geometry.xwrap(pos[0]), pos[1], (int)variantLayer.value(terrainLayer), "mod");
+    uint32_t variance = staticRandomU32(renderData.geometry.xwrap(pos[0]), renderData.geometry.ywrap(pos[1]), (int)variantLayer.value(terrainLayer), "mod");
     auto& drawList = drawables[modZLevel(modRenderProfile->zLevel, mod, modHue, modColorVariant)];
 
     MaterialPieceResultList pieces;

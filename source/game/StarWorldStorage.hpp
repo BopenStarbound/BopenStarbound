@@ -95,7 +95,7 @@ public:
   static WorldChunks getWorldChunksFromFile(String const& file);
 
   // Create a new world of the given size.
-  WorldStorage(Vec2U const& worldSize, IODevicePtr const& device, WorldGeneratorFacadePtr const& generatorFacade);
+  WorldStorage(Vec2U const& worldSize, bool const& wrapsX, bool const& wrapsY, IODevicePtr const& device, WorldGeneratorFacadePtr const& generatorFacade);
   // Read an existing world.
   WorldStorage(IODevicePtr const& device, WorldGeneratorFacadePtr const& generatorFacade);
   // Read an in-memory world.
@@ -193,6 +193,8 @@ private:
 
   struct WorldMetadataStore {
     Vec2U worldSize;
+    bool wrapsX;
+    bool wrapsY;
     VersionedJson userMetadata;
   };
 
@@ -300,6 +302,8 @@ private:
   StableHashMap<Sector, SectorMetadata> m_sectorMetadata;
   OrderedHashMap<Sector, float> m_generationQueue;
   BTreeDatabase m_db;
+  bool m_wrapsX;
+  bool m_wrapsY;
 };
 
 }

@@ -398,7 +398,7 @@ ObjectPtr ObjectDatabase::createForPlacement(World const* world, String const& o
     return {};
 
   ObjectPtr object = createObject(objectName, parameters);
-  object->setTilePosition(world->geometry().xwrap(position));
+  object->setTilePosition(world->geometry().wrap(position));
   object->setDirection(direction);
 
   return object;

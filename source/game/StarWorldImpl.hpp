@@ -209,8 +209,8 @@ namespace WorldImpl {
 
     SMutableIterator<List<Vec2I>> tileIt{res};
     while (tileIt.hasNext()) {
-      auto tileRect = RectF::withSize(Vec2F(worldGeometry.xwrap(tileIt.next())), Vec2F::filled(1.0f));
-      Line2F line{worldGeometry.xwrap(begin), worldGeometry.xwrap(end)};
+      auto tileRect = RectF::withSize(Vec2F(worldGeometry.wrap(tileIt.next())), Vec2F::filled(1.0f));
+      Line2F line{worldGeometry.wrap(begin), worldGeometry.wrap(end)};
       auto lineSet = worldGeometry.splitLine(line);
       if (any(lineSet, [&](Line2F const& line) { return tileRect.edgeIntersection(line).glances; }))
         tileIt.remove();
@@ -406,11 +406,13 @@ namespace WorldImpl {
   template <typename TileSectorArray>
   float lightLevel(shared_ptr<TileSectorArray> const& tileSectorArray, EntityMapPtr const& entityMap, WorldGeometry const& worldGeometry,
       WorldTemplateConstPtr const& worldTemplate, SkyConstPtr const& sky, CellularLightIntensityCalculator& lighting, Vec2F pos) {
-    if (pos[1] < 0 || pos[1] >= worldGeometry.height())
+    if (!worldGeometry.wrapsY() && (pos[1] < 0 || pos[1] >= worldGeometry.height()))
+      return 0;
+    if (!worldGeometry.wrapsX() && (pos[0] < 0 || pos[0] >= worldGeometry.width()))
       return 0;
 
     // tileEach can't handle rects that are WAY out of range.
-    pos = worldGeometry.xwrap(pos);
+    pos = worldGeometry.wrap(pos);
 
     Vec3F environmentLight = sky->environmentLight().toRgbF();
     float undergroundLevel = worldTemplate->undergroundLevel();

@@ -61,6 +61,8 @@ struct VisitableWorldParameters {
   BeamUpRule beamUpRule;
   bool disableDeathDrops{false};
   bool terraformed{false};
+  bool xWrap{true};
+  bool yWrap{false};
   WorldEdgeForceRegionType worldEdgeForceRegions{WorldEdgeForceRegionType::None};
 };
 

@@ -342,6 +342,7 @@ void Player::init(World* world, EntityId entityId, EntityMode mode) {
   }
 
   m_xAimPositionNetState.setInterpolator(world->geometry().xLerpFunction());
+  m_yAimPositionNetState.setInterpolator(world->geometry().yLerpFunction());
   refreshEquipment();
 }
 
@@ -1084,7 +1085,7 @@ void Player::update(float dt, uint64_t) {
       } else
         calculateHeadRotation = true;
     }
-    if (calculateHeadRotation) { // master or not an OpenStarbound player
+    if (calculateHeadRotation) { // master or not an BopenStarbound player
       float headRotation = 0.f;
       if (Humanoid::globalHeadRotation() && (m_humanoid->primaryHandHoldingItem() || m_humanoid->altHandHoldingItem() || m_humanoid->dance())) {
         auto primary = m_tools->primaryHandItem();

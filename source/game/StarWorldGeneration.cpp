@@ -38,7 +38,7 @@ LiquidWorld::LiquidWorld(WorldServer* world) {
 }
 
 Vec2I LiquidWorld::uniqueLocation(Vec2I const& location) const {
-  return m_worldServer->geometry().xwrap(location);
+  return m_worldServer->geometry().wrap(location);
 }
 
 float LiquidWorld::drainLevel(Vec2I const& location) const {
@@ -532,17 +532,17 @@ void DungeonGeneratorWorld::clearTileEntities(RectI const& bounds, Set<Vec2I> co
   entities.filter([positions, geometry, clearAnchoredObjects](EntityPtr entity) {
       auto tileEntity = as<TileEntity>(entity);
       for (auto pos : tileEntity->spaces()) {
-        if (positions.contains(geometry.xwrap(pos + tileEntity->tilePosition())))
+        if (positions.contains(geometry.wrap(pos + tileEntity->tilePosition())))
           return true;
       }
       if (clearAnchoredObjects) {
         for (auto pos : tileEntity->roots()) {
-          if (positions.contains(geometry.xwrap(pos + tileEntity->tilePosition())))
+          if (positions.contains(geometry.wrap(pos + tileEntity->tilePosition())))
             return true;
         }
         if (auto object = as<Object>(entity)) {
           for (auto pos : object->anchorPositions()) {
-            if (positions.contains(geometry.xwrap(pos)))
+            if (positions.contains(geometry.wrap(pos)))
               return true;
           }
         }
@@ -1462,10 +1462,10 @@ Map<Vec2I, float> WorldGenerator::determineLiquidLevel(Set<Vec2I> const& spots, 
       if (openSet.contains(node)) {
         openSet.remove(node);
         cluster.add(node);
-        openCluster.add(geometry.xwrap(Vec2I(node.x(), node.y() + 1)));
-        openCluster.add(geometry.xwrap(Vec2I(node.x(), node.y() - 1)));
-        openCluster.add(geometry.xwrap(Vec2I(node.x() + 1, node.y())));
-        openCluster.add(geometry.xwrap(Vec2I(node.x() - 1, node.y())));
+        openCluster.add(geometry.wrap(Vec2I(node.x(), node.y() + 1)));
+        openCluster.add(geometry.wrap(Vec2I(node.x(), node.y() - 1)));
+        openCluster.add(geometry.wrap(Vec2I(node.x() + 1, node.y())));
+        openCluster.add(geometry.wrap(Vec2I(node.x() - 1, node.y())));
       }
     }
     levelCluster(cluster, filled, results);

@@ -1005,7 +1005,7 @@ Vec2F Npc::velocity() const {
 }
 
 Vec2F Npc::aimPosition() const {
-  return world()->geometry().xwrap(Vec2F(m_xAimPosition.get(), m_yAimPosition.get()) + position());
+  return world()->geometry().wrap(Vec2F(m_xAimPosition.get(), m_yAimPosition.get()) + position());
 }
 
 float Npc::interactRadius() const {

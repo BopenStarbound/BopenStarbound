@@ -49,10 +49,12 @@ WorldChunks WorldStorage::getWorldChunksFromFile(String const& file) {
   return chunks;
 }
 
-WorldStorage::WorldStorage(Vec2U const& worldSize, IODevicePtr const& device, WorldGeneratorFacadePtr const& generatorFacade)
+WorldStorage::WorldStorage(Vec2U const& worldSize, bool const& wrapsX, bool const& wrapsY, IODevicePtr const& device, WorldGeneratorFacadePtr const& generatorFacade)
   : WorldStorage() {
-  m_tileArray = make_shared<ServerTileSectorArray>(worldSize);
-  m_entityMap = make_shared<EntityMap>(worldSize, MinServerEntityId, MaxServerEntityId);
+  m_wrapsX = wrapsX;
+  m_wrapsY = wrapsY;
+  m_tileArray = make_shared<ServerTileSectorArray>(worldSize, wrapsX, wrapsY);
+  m_entityMap = make_shared<EntityMap>(worldSize, wrapsX, wrapsY, MinServerEntityId, MaxServerEntityId);
   m_generatorFacade = generatorFacade;
   m_floatingDungeonWorld = false;
 
@@ -61,7 +63,7 @@ WorldStorage::WorldStorage(Vec2U const& worldSize, IODevicePtr const& device, Wo
 
   openDatabase(m_db, device);
 
-  m_db.insert(metadataKey(), writeWorldMetadata(WorldMetadataStore{worldSize, VersionedJson()}));
+  m_db.insert(metadataKey(), writeWorldMetadata(WorldMetadataStore{worldSize, wrapsX, wrapsY, VersionedJson()}));
   m_db.commit();
 }
 
@@ -71,9 +73,10 @@ WorldStorage::WorldStorage(IODevicePtr const& device, WorldGeneratorFacadePtr co
 
   openDatabase(m_db, device);
 
-  Vec2U worldSize = readWorldMetadata(*m_db.find(metadataKey())).worldSize;
-  m_tileArray = make_shared<ServerTileSectorArray>(worldSize);
-  m_entityMap = make_shared<EntityMap>(worldSize, MinServerEntityId, MaxServerEntityId);
+  auto metadata = readWorldMetadata(*m_db.find(metadataKey()));
+  Vec2U worldSize = metadata.worldSize;
+  m_tileArray = make_shared<ServerTileSectorArray>(worldSize, metadata.wrapsX, metadata.wrapsY);
+  m_entityMap = make_shared<EntityMap>(worldSize, metadata.wrapsX, metadata.wrapsY, MinServerEntityId, MaxServerEntityId);
 }
 
 WorldStorage::WorldStorage(WorldChunks const& chunks, WorldGeneratorFacadePtr const& generatorFacade) : WorldStorage() {
@@ -87,9 +90,10 @@ WorldStorage::WorldStorage(WorldChunks const& chunks, WorldGeneratorFacadePtr co
       m_db.insert(p.first, *p.second);
   }
 
-  Vec2U worldSize = readWorldMetadata(*m_db.find(metadataKey())).worldSize;
-  m_tileArray = make_shared<ServerTileSectorArray>(worldSize);
-  m_entityMap = make_shared<EntityMap>(worldSize, MinServerEntityId, MaxServerEntityId);
+  auto metadata = readWorldMetadata(*m_db.find(metadataKey()));
+  Vec2U worldSize = metadata.worldSize;
+  m_tileArray = make_shared<ServerTileSectorArray>(worldSize, metadata.wrapsX, metadata.wrapsY);
+  m_entityMap = make_shared<EntityMap>(worldSize, metadata.wrapsX, metadata.wrapsY, MinServerEntityId, MaxServerEntityId);
 }
 
 WorldStorage::~WorldStorage() {
@@ -104,7 +108,7 @@ VersionedJson WorldStorage::worldMetadata() {
 }
 
 void WorldStorage::setWorldMetadata(VersionedJson const& metadata) {
-  m_db.insert(metadataKey(), writeWorldMetadata({Vec2U(m_tileArray->size()), metadata}));
+  m_db.insert(metadataKey(), writeWorldMetadata({Vec2U(m_tileArray->size()), m_wrapsX, m_wrapsY, metadata}));
 }
 
 ServerTileSectorArrayPtr const& WorldStorage::tileArray() const {
@@ -447,6 +451,8 @@ WorldStorage::WorldMetadataStore WorldStorage::readWorldMetadata(ByteArray const
 
   WorldMetadataStore metadata;
   ds.read(metadata.worldSize);
+  ds.read(metadata.wrapsX);
+  ds.read(metadata.wrapsY);
   ds.read(metadata.userMetadata);
 
   return metadata;
@@ -456,6 +462,8 @@ ByteArray WorldStorage::writeWorldMetadata(WorldMetadataStore const& metadata) {
   DataStreamBuffer ds;
 
   ds.write(metadata.worldSize);
+  ds.write(metadata.wrapsX);
+  ds.write(metadata.wrapsY);
   ds.write(metadata.userMetadata);
 
   return compressData(ds.data());
@@ -599,7 +607,7 @@ WorldStorage::WorldStorage() {
 }
 
 bool WorldStorage::belongsInSector(Sector const& sector, Vec2F const& position) const {
-  WorldGeometry geometry(m_tileArray->size());
+  WorldGeometry geometry(m_tileArray->size(), m_wrapsX, m_wrapsY);
   return RectF(m_tileArray->sectorRegion(sector)).belongs(geometry.limit(position));
 }
 

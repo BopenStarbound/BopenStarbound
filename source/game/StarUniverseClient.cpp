@@ -86,7 +86,7 @@ Maybe<String> UniverseClient::connect(UniverseConnection connection, bool allowA
   {
     auto protocolRequest = make_shared<ProtocolRequestPacket>(StarProtocolVersion);
     protocolRequest->setCompressionMode(PacketCompressionMode::Enabled);
-    // Signal that we're OpenStarbound. Vanilla Starbound only compresses
+    // Signal that we're BopenStarbound. Vanilla Starbound only compresses
     // packets above 64 bytes - by forcing it, we can communicate this.
     connection.pushSingle(protocolRequest);
   }
@@ -116,7 +116,7 @@ Maybe<String> UniverseClient::connect(UniverseConnection connection, bool allowA
         compressedSocket->setCompressionStreamEnabled(compressionMode == NetCompressionMode::Zstd);
       }
     } else {
-      compatibilityRules.setVersion(1); // A version of 1 is OpenStarbound prior to the NetElement compatibility stuff
+      compatibilityRules.setVersion(1); // A version of 1 is BopenStarbound prior to the NetElement compatibility stuff
       if (compressedSocket) {
         Logger::info("UniverseClient: Defaulting to Zstd network stream compression (older server version)");
         compressedSocket->setCompressionStreamEnabled(true);
@@ -128,7 +128,7 @@ Maybe<String> UniverseClient::connect(UniverseConnection connection, bool allowA
       m_mainPlayer->species(), m_playerStorage->loadShipData(m_mainPlayer->uuid()), m_mainPlayer->shipUpgrades(),
       m_mainPlayer->log()->introComplete(), account);
   clientConnect->info = JsonObject{
-    {"brand", "OpenStarbound"},
+    {"brand", "BopenStarbound"},
     {"openProtocolVersion", OpenProtocolVersion }
   };
   connection.pushSingle(std::move(clientConnect));
@@ -164,7 +164,7 @@ Maybe<String> UniverseClient::connect(UniverseConnection connection, bool allowA
     m_celestialDatabase = make_shared<CelestialSlaveDatabase>(std::move(success->celestialInformation));
     m_systemWorldClient = make_shared<SystemWorldClient>(m_universeClock, m_celestialDatabase, m_mainPlayer->universeMap());
 
-    Logger::info("UniverseClient: Joined {} server as client {}", legacyServer ? "Starbound" : "OpenStarbound", success->clientId);
+    Logger::info("UniverseClient: Joined {} server as client {}", legacyServer ? "Starbound" : "BopenStarbound", success->clientId);
     return {};
   } else if (auto failure = as<ConnectFailurePacket>(packet)) {
     Logger::error("UniverseClient: Join failed: {}", failure->reason);

@@ -54,8 +54,8 @@ public:
 
   // Create a new world with the given template, writing new storage file.
   WorldServer(WorldTemplatePtr const& worldTemplate, IODevicePtr storage);
-  // Synonym for WorldServer(make_shared<WorldTemplate>(size), storage);
-  WorldServer(Vec2U const& size, IODevicePtr storage);
+  // Synonym for WorldServer(make_shared<WorldTemplate>(size,xWrap,yWrap), storage);
+  WorldServer(Vec2U const& size, bool const& xWrap, bool const& yWrap, IODevicePtr storage);
   // Load an existing world from the given storage files
   WorldServer(IODevicePtr const& storage);
   // Load an existing world from the given in-memory chunks

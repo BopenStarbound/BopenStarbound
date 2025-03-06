@@ -32,6 +32,8 @@ namespace LuaBindings {
     Vec2F distance(World* world, Vec2F const& arg1, Vec2F const& arg2);
     bool polyContains(World* world, PolyF const& poly, Vec2F const& pos);
     LuaValue xwrap(World* world, LuaEngine& engine, LuaValue const& positionOrX);
+    LuaValue ywrap(World* world, LuaEngine& engine, LuaValue const& positionOrX);
+    Vec2F wrap(World* world, Vec2F const& position);
     LuaValue nearestTo(World* world, LuaEngine& engine, Variant<Vec2F, float> const& sourcePositionOrX, Variant<Vec2F, float> const& targetPositionOrX);
     bool rectCollision(World* world, RectF const& arg1, Maybe<CollisionSet> const& arg2);
     bool pointTileCollision(World* world, Vec2F const& arg1, Maybe<CollisionSet> const& arg2);

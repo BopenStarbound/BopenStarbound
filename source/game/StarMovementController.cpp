@@ -331,9 +331,13 @@ bool MovementController::atWorldLimit(bool bottomOnly) const {
   if (m_world) {
     if (!collisionPoly().isNull()) {
       auto bounds = collisionBoundBox();
-      return bounds.yMin() <= 0 || (!bottomOnly && bounds.yMax() >= m_world->geometry().height());
+      return 
+         (               !m_world->geometry().wrapsY() && (bounds.yMin() <= 0 || (!bottomOnly && bounds.yMax() >= m_world->geometry().height())))
+      || (!bottomOnly && !m_world->geometry().wrapsX() && (bounds.xMin() <= 0 ||                 bounds.xMax() >= m_world->geometry().width()  ));
     } else {
-      return yPosition() <= 0 || (!bottomOnly && yPosition() >= m_world->geometry().height());
+      return 
+         (               !m_world->geometry().wrapsY() && (yPosition() <= 0 || (!bottomOnly && yPosition() >= m_world->geometry().height())))
+      || (!bottomOnly && !m_world->geometry().wrapsX() && (xPosition() <= 0 ||                 xPosition() >= m_world->geometry().width()  ));
     }
   }
   return false;
@@ -635,8 +639,8 @@ void MovementController::tickMaster(float dt) {
 
   if (surfaceCollision) {
     m_surfaceMovingCollisionPosition = surfaceCollision->position;
-    m_xRelativeSurfaceMovingCollisionPosition.set(geometry.diff(xPosition(), m_surfaceMovingCollisionPosition[0]));
-    m_yRelativeSurfaceMovingCollisionPosition.set(yPosition() - m_surfaceMovingCollisionPosition[1]);
+    m_xRelativeSurfaceMovingCollisionPosition.set(geometry.xdiff(xPosition(), m_surfaceMovingCollisionPosition[0]));
+    m_yRelativeSurfaceMovingCollisionPosition.set(geometry.ydiff(yPosition(), m_surfaceMovingCollisionPosition[1]));
   } else {
     m_surfaceMovingCollisionPosition = {};
     m_surfaceVelocity = {};
@@ -1059,11 +1063,13 @@ void MovementController::updateParameters(MovementParameters parameters) {
 }
 
 void MovementController::updatePositionInterpolators() {
-  if (m_world)
+  if (m_world) {
     m_xPosition.setInterpolator(m_world->geometry().xLerpFunction(m_parameters.discontinuityThreshold));
-  else
+    m_yPosition.setInterpolator(m_world->geometry().yLerpFunction(m_parameters.discontinuityThreshold));
+  } else {
     m_xPosition.setInterpolator(bind(lerpWithLimit<float, float>, m_parameters.discontinuityThreshold, _1, _2, _3));
-  m_yPosition.setInterpolator(bind(lerpWithLimit<float, float>, m_parameters.discontinuityThreshold, _1, _2, _3));
+    m_yPosition.setInterpolator(bind(lerpWithLimit<float, float>, m_parameters.discontinuityThreshold, _1, _2, _3));
+  }
 }
 
 void MovementController::queryCollisions(RectF const& region) {

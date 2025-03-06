@@ -347,7 +347,7 @@ void ClientWeather::spawnWeatherParticles(RectF newClientRegion, float dt) {
         auto newParticle = particleConfig.particle;
         float x = Random::randf() * renderZone.width() + renderZone.xMin();
         float y = Random::randf() * renderZone.height() + renderZone.yMin();
-        newParticle.position += m_worldGeometry.xwrap(Vec2F(x, y));
+        newParticle.position += m_worldGeometry.wrap(Vec2F(x, y));
         newParticle.velocity = targetVelocity;
         if (y > m_undergroundLevel && (!m_weatherEffectsActiveQuery || m_weatherEffectsActiveQuery(Vec2I::floor(newParticle.position)))) {
           if (particleConfig.autoRotate)

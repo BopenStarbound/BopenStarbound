@@ -36,7 +36,7 @@ EnumMap<WorldServerFidelity> const WorldServerFidelityNames{
 
 WorldServer::WorldServer(WorldTemplatePtr const& worldTemplate, IODevicePtr storage) {
   m_worldTemplate = worldTemplate;
-  m_worldStorage = make_shared<WorldStorage>(m_worldTemplate->size(), storage, make_shared<WorldGenerator>(this));
+  m_worldStorage = make_shared<WorldStorage>(m_worldTemplate->size(), m_worldTemplate->wrapsX(), m_worldTemplate->wrapsY(), storage, make_shared<WorldGenerator>(this));
   m_adjustPlayerStart = true;
   m_respawnInWorld = false;
   m_tileProtectionEnabled = true;
@@ -48,8 +48,8 @@ WorldServer::WorldServer(WorldTemplatePtr const& worldTemplate, IODevicePtr stor
   writeMetadata();
 }
 
-WorldServer::WorldServer(Vec2U const& size, IODevicePtr storage)
-  : WorldServer(make_shared<WorldTemplate>(size), storage) {}
+WorldServer::WorldServer(Vec2U const& size, bool const& xWrap, bool const& yWrap, IODevicePtr storage)
+  : WorldServer(make_shared<WorldTemplate>(size, xWrap, yWrap), storage) {}
 
 WorldServer::WorldServer(IODevicePtr const& storage) {
   m_worldStorage = make_shared<WorldStorage>(storage, make_shared<WorldGenerator>(this));
@@ -878,7 +878,7 @@ TileModificationList WorldServer::forceApplyTileModifications(TileModificationLi
 TileDamageResult WorldServer::damageTiles(List<Vec2I> const& positions, TileLayer layer, Vec2F const& sourcePosition, TileDamage const& damage, Maybe<EntityId> sourceEntity) {
   Set<Vec2I> positionSet;
   for (auto const& pos : positions)
-    positionSet.add(m_geometry.xwrap(pos));
+    positionSet.add(m_geometry.wrap(pos));
 
   Set<EntityPtr> damagedEntities;
   auto res = TileDamageResult::None;
@@ -902,7 +902,7 @@ TileDamageResult WorldServer::damageTiles(List<Vec2I> const& positions, TileLaye
           if (!damagedEntities.contains(entity)) {
             Set<Vec2I> entitySpacesSet;
             for (auto const& space : entity->spaces())
-              entitySpacesSet.add(m_geometry.xwrap(entity->tilePosition() + space));
+              entitySpacesSet.add(m_geometry.wrap(entity->tilePosition() + space));
 
             bool broken = entity->damageTiles(entitySpacesSet.intersection(damagePositionSet).values(), sourcePosition, tileDamage);
             if (sourceEntity.isValid() && broken) {
@@ -1292,7 +1292,7 @@ void WorldServer::init(bool firstTime) {
   m_currentTime = 0;
   m_currentStep = 0;
   m_generatingDungeon = false;
-  m_geometry = WorldGeometry(m_worldTemplate->size());
+  m_geometry = WorldGeometry(m_worldTemplate->size(),m_worldTemplate->wrapsX(),m_worldTemplate->wrapsY());
   m_entityMap = m_worldStorage->entityMap();
   m_tileArray = m_worldStorage->tileArray();
   m_tileGetterFunction = [&](Vec2I pos) -> ServerTile const& { return m_tileArray->tile(pos); };
@@ -1340,7 +1340,7 @@ void WorldServer::init(bool firstTime) {
         while (retryCounter > 0) {
           --retryCounter;
           auto dungeonFacade = make_shared<DungeonGeneratorWorld>(this, true);
-          Vec2I position = Vec2I((dungeon.baseX + rnd.randInt(0, dungeon.xVariance)) % m_geometry.width(), dungeon.baseHeight);
+          Vec2I position = m_geometry.wrap(Vec2I(dungeon.baseX + rnd.randInt(0, dungeon.xVariance), dungeon.baseHeight));
           DungeonGenerator dungeonGenerator(dungeon.dungeon, m_worldTemplate->worldSeed(), m_worldTemplate->threatLevel(), currentDungeonId);
           if (auto generateResult = dungeonGenerator.generate(dungeonFacade, position, dungeon.blendWithTerrain, dungeon.force)) {
             if (dungeonGenerator.definition()->isProtected())

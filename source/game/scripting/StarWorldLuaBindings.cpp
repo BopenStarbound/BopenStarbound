@@ -237,7 +237,16 @@ namespace LuaBindings {
     callbacks.registerCallbackWithSignature<Vec2F, Vec2F, Vec2F>("distance", bind(WorldCallbacks::distance, world, _1, _2));
     callbacks.registerCallbackWithSignature<bool, PolyF, Vec2F>("polyContains", bind(WorldCallbacks::polyContains, world, _1, _2));
     callbacks.registerCallbackWithSignature<LuaValue, LuaEngine&, LuaValue>("xwrap", bind(WorldCallbacks::xwrap, world, _1, _2));
-    callbacks.registerCallbackWithSignature<LuaValue, LuaEngine&, Variant<Vec2F, float>, Variant<Vec2F, float>>("nearestTo", bind(WorldCallbacks::nearestTo, world, _1, _2, _3));
+    callbacks.registerCallbackWithSignature<LuaValue, LuaEngine&, LuaValue>("ywrap", bind(WorldCallbacks::ywrap, world, _1, _2));
+    callbacks.registerCallbackWithSignature<Vec2F,    Vec2F>(   "wrap", bind(WorldCallbacks::wrap, world, _1));
+
+    callbacks.registerCallback("wrapsX", [world]() -> bool {
+        return world->geometry().wrapsX();
+      });
+    callbacks.registerCallback("wrapsY", [world]() -> bool {
+        return world->geometry().wrapsY();
+      });
+    callbacks.registerCallbackWithSignature<LuaValue, LuaEngine&, Vec2F, Vec2F>("nearestTo", bind(WorldCallbacks::nearestTo, world, _1, _2, _3));
 
     callbacks.registerCallbackWithSignature<bool, RectF, Maybe<CollisionSet>>("rectCollision", bind(WorldCallbacks::rectCollision, world, _1, _2));
     callbacks.registerCallbackWithSignature<bool, Vec2F, Maybe<CollisionSet>>("pointTileCollision", bind(WorldCallbacks::pointTileCollision, world, _1, _2));
@@ -627,7 +636,19 @@ namespace LuaBindings {
   LuaValue WorldCallbacks::xwrap(World* world, LuaEngine& engine, LuaValue const& positionOrX) {
     if (auto x = engine.luaMaybeTo<float>(positionOrX))
       return LuaFloat(world->geometry().xwrap(*x));
-    return engine.luaFrom<Vec2F>(world->geometry().xwrap(engine.luaTo<Vec2F>(positionOrX)));
+    // gonna have this use wrap for now so existing mods work
+    // consider abandoning mod backwards compatibility as well
+    return engine.luaFrom<Vec2F>(world->geometry().wrap(engine.luaTo<Vec2F>(positionOrX)));
+  }
+
+  LuaValue WorldCallbacks::ywrap(World* world, LuaEngine& engine, LuaValue const& positionOrY) {
+    if (auto y = engine.luaMaybeTo<float>(positionOrY))
+      return LuaFloat(world->geometry().ywrap(*y));
+    return engine.luaFrom<Vec2F>(world->geometry().ywrap(engine.luaTo<Vec2F>(positionOrY)));
+  }
+
+  Vec2F WorldCallbacks::wrap(World* world, Vec2F const& position) {
+    return world->geometry().wrap(position);
   }
 
   LuaValue WorldCallbacks::nearestTo(World* world, LuaEngine& engine, Variant<Vec2F, float> const& sourcePositionOrX, Variant<Vec2F, float> const& targetPositionOrX) {
@@ -649,7 +670,7 @@ namespace LuaBindings {
       else
         sourceX = sourcePositionOrX.get<float>();
 
-      return LuaFloat(world->geometry().nearestTo(sourceX, targetX));
+      return LuaFloat(world->geometry().nearestToX(sourceX, targetX));
     }
   }
 

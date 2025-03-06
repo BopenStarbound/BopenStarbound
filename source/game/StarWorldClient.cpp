@@ -1742,8 +1742,8 @@ void WorldClient::initWorld(WorldStartPacket const& startPacket) {
   m_mainPlayer->clientContext()->setConnectionId(startPacket.clientId);
   auto entitySpace = connectionEntitySpace(startPacket.clientId);
   m_worldTemplate = make_shared<WorldTemplate>(startPacket.templateData);
-  m_entityMap = make_shared<EntityMap>(m_worldTemplate->size(), entitySpace.first, entitySpace.second);
-  m_tileArray = make_shared<ClientTileSectorArray>(m_worldTemplate->size());
+  m_entityMap = make_shared<EntityMap>(m_worldTemplate->size(), m_worldTemplate->wrapsX(), m_worldTemplate->wrapsY(), entitySpace.first, entitySpace.second);
+  m_tileArray = make_shared<ClientTileSectorArray>(m_worldTemplate->size(), m_worldTemplate->wrapsX(), m_worldTemplate->wrapsY());
   m_tileGetterFunction = [&, tile = ClientTile()](Vec2I pos) mutable -> ClientTile const& {
     if (!m_predictedTiles.empty()) {
       if (auto p = m_predictedTiles.ptr(pos)) {
@@ -1769,7 +1769,7 @@ void WorldClient::initWorld(WorldStartPacket const& startPacket) {
   m_dungeonIdBreathable = startPacket.dungeonIdBreathable;
   m_protectedDungeonIds = startPacket.protectedDungeonIds;
 
-  m_geometry = WorldGeometry(m_worldTemplate->size());
+  m_geometry = WorldGeometry(m_worldTemplate->size(), m_worldTemplate->wrapsX(), m_worldTemplate->wrapsY());
 
   m_particles = make_shared<ParticleManager>(m_geometry, m_tileArray);
   m_particles->setUndergroundLevel(m_worldTemplate->undergroundLevel());
@@ -1883,7 +1883,7 @@ Vec2I WorldClient::environmentBiomeTrackPosition() const {
     return {};
 
   auto pos = Vec2I::floor(m_clientState.windowCenter());
-  return {m_geometry.xwrap(pos[0]), pos[1]};
+  return m_geometry.wrap(pos);
 }
 
 AmbientNoisesDescriptionPtr WorldClient::currentAmbientNoises() const {

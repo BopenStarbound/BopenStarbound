@@ -8,8 +8,8 @@ namespace Star {
 float const EntityMapSpatialHashSectorSize = 16.0f;
 int const EntityMap::MaximumEntityBoundBox = 10000;
 
-EntityMap::EntityMap(Vec2U const& worldSize, EntityId beginIdSpace, EntityId endIdSpace)
-  : m_geometry(worldSize),
+EntityMap::EntityMap(Vec2U const& worldSize, bool const& xWrap, bool const& yWrap, EntityId beginIdSpace, EntityId endIdSpace)
+  : m_geometry(worldSize,xWrap,yWrap),
     m_spatialMap(EntityMapSpatialHashSectorSize),
     m_nextId(beginIdSpace),
     m_beginIdSpace(beginIdSpace),

@@ -585,7 +585,7 @@ EntityType Plant::entityType() const {
 void Plant::init(World* world, EntityId entityId, EntityMode mode) {
   Entity::init(world, entityId, mode);
   validatePieces();
-  m_tilePosition = world->geometry().xwrap(m_tilePosition);
+  m_tilePosition = world->geometry().wrap(m_tilePosition);
 }
 
 pair<ByteArray, uint64_t> Plant::writeNetState(uint64_t fromVersion, NetCompatibilityRules rules) {
@@ -920,8 +920,8 @@ bool Plant::damageTiles(List<Vec2I> const& positions, Vec2F const& sourcePositio
   auto geometry = world()->geometry();
 
   m_tileDamageStatus.damage(m_tileDamageParameters, tileDamage);
-  m_tileDamageX = geometry.diff(position[0], tilePosition()[0]);
-  m_tileDamageY = position[1] - tilePosition()[1];
+  m_tileDamageX = geometry.xdiff(position[0], tilePosition()[0]);
+  m_tileDamageY = geometry.ydiff(position[1], tilePosition()[1]);
   m_tileDamageEvent = true;
   m_tileDamageEventTrigger = true;
 

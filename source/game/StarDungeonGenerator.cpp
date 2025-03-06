@@ -964,7 +964,7 @@ namespace Dungeon {
   }
 
   Vec2I DungeonGeneratorWriter::wrapPosition(Vec2I const& pos) const {
-    return m_facade->getWorldGeometry().xwrap(pos);
+    return m_facade->getWorldGeometry().wrap(pos);
   }
 
   void DungeonGeneratorWriter::setMarkDungeonId(Maybe<DungeonId> dungeonId) {
@@ -1175,8 +1175,8 @@ namespace Dungeon {
 
   void DungeonGeneratorWriter::flush() {
     auto geometry = m_facade->getWorldGeometry();
-    auto displace = [&](Vec2I pos) -> Vec2I { return geometry.xwrap(pos); };
-    auto displaceF = [&](Vec2F pos) -> Vec2F { return geometry.xwrap(pos); };
+    auto displace = [&](Vec2I pos) -> Vec2I { return geometry.wrap(pos); };
+    auto displaceF = [&](Vec2F pos) -> Vec2F { return geometry.wrap(pos); };
 
     PolyF::VertexList terrainBlendingVertexes;
     PolyF::VertexList spaceBlendingVertexes;

@@ -35,7 +35,7 @@ void ParticleManager::update(float dt, RectF const& cullRegion, float wind) {
 
   for (auto& particle : m_particles) {
     bool inRegion = false;
-    Vec2F worldPos = m_worldGeometry.xwrap(particle.position);
+    Vec2F worldPos = m_worldGeometry.wrap(particle.position);
     for (auto cullRect : cullRects) {
       if (cullRect.contains(worldPos)) {
         inRegion = true;

@@ -7,28 +7,28 @@ You **must** own a copy of Starbound to use it. Base game assets are not provide
 It is still **work-in-progress**.
 
 ## Installation
-You can download a nightly build below, or the [latest release](https://github.com/OpenStarbound/OpenStarbound/releases/latest). At the moment, you must copy the game assets (**packed.pak**) from your normal Starbound install to the OpenStarbound assets directory before playing.
+You can download a nightly build below, or the [latest release](https://github.com/BopenStarbound/BopenStarbound/releases/latest). At the moment, you must copy the game assets (**packed.pak**) from your normal Starbound install to the BopenStarbound assets directory before playing.
 
-OpenStarbound is a separate installation/executable than Starbound. You can copy your `storage` folder from Starbound to transfer your save data and settings. Launching OpenStarbound with Steam open will load your subscribed Steam mods.
+BopenStarbound is a separate installation/executable than Starbound. You can copy your `storage` folder from Starbound to transfer your save data and settings. Launching BopenStarbound with Steam open will load your subscribed Steam mods.
 
-An installer is available for Windows. otherwise, extract the client/server zip for your platform and copy the game assets (packed.pak) to the OpenStarbound assets folder. the macOS releases currently lack the sbinit.config and folder structure that the Linux & Windows zips have, so you'll need to create those before running them. For macOS releases, it is recommended to build them from source (See guide below).
+An installer is available for Windows. otherwise, extract the client/server zip for your platform and copy the game assets (packed.pak) to the BopenStarbound assets folder. the macOS releases currently lack the sbinit.config and folder structure that the Linux & Windows zips have, so you'll need to create those before running them. For macOS releases, it is recommended to build them from source (See guide below).
 ### Nightly Builds
-These link directly to the latest build from the [Actions](https://github.com/OpenStarbound/OpenStarbound/actions?query=branch%3Amain) tab.
+These link directly to the latest build from the [Actions](https://github.com/BopenStarbound/BopenStarbound/actions?query=branch%3Amain) tab.
 
 **Windows**
-[Installer](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main/OpenStarbound-Windows-Installer.zip),
-[Client](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main/OpenStarbound-Windows-Client.zip),
-[Server](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main/OpenStarbound-Windows-Server.zip)
+[Installer](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main/BopenStarbound-Windows-Installer.zip),
+[Client](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main/BopenStarbound-Windows-Client.zip),
+[Server](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main/BopenStarbound-Windows-Server.zip)
 
 **Linux**
-[Client](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main/OpenStarbound-Linux-Client.zip),
-[Server](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main/OpenStarbound-Linux-Server.zip)
+[Client](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main/BopenStarbound-Linux-Client.zip),
+[Server](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main/BopenStarbound-Linux-Server.zip)
 
 **macOS**
-[Intel](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main/OpenStarbound-Dev-macOS-Intel.zip),
-[ARM](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main/OpenStarbound-Dev-macOS-Silicon.zip)
+[Intel](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main/BopenStarbound-Dev-macOS-Intel.zip),
+[ARM](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main/BopenStarbound-Dev-macOS-Silicon.zip)
 
-[All Nightly Builds](https://nightly.link/OpenStarbound/OpenStarbound/workflows/build/main)
+[All Nightly Builds](https://nightly.link/BopenStarbound/BopenStarbound/workflows/build/main)
 
 ## Changes
 Note: Not every function from [StarExtensions](https://github.com/StarExtensions/StarExtensions) has been ported yet, but near-full compatibility with mods that use StarExtensions features is planned.
@@ -44,7 +44,7 @@ Note: Not every function from [StarExtensions](https://github.com/StarExtensions
 * Lua patch files now exist - **.patch.lua**
   * These can patch JSON assets, as well as images!
 ### Commands
-**View OpenStarbound commands with `/help`! You can also view them [here](https://github.com/OpenStarbound/OpenStarbound/blob/main/assets/opensb/help.config.patch)**
+**View BopenStarbound commands with `/help`! You can also view them [here](https://github.com/BopenStarbound/BopenStarbound/blob/main/assets/opensb/help.config.patch)**
   * Changes to vanilla commands:
     * `/settileprotection`
       * You can now specify as many dungeon IDs as you want: `/settileprotection 69 420 false`
@@ -52,9 +52,9 @@ Note: Not every function from [StarExtensions](https://github.com/StarExtensions
 ### Bug Fixes
 * Invalid character inventories are updated when loading in, allowing players to swap inventory mods with pre-existing characters.
 * Fix vanilla world file size bloating issue.
-* Modifying a single status property no longer re-networks every status property on the entity (server and client must be running at least OpenStarbound 0.15)
+* Modifying a single status property no longer re-networks every status property on the entity (server and client must be running at least BopenStarbound 0.15)
 ### Misc
-* Player functions for saving/loading, modifying the humanoid identity, manipulating the inventory. [Documentation](https://github.com/OpenStarbound/OpenStarbound/tree/main/doc/lua/openstarbound)
+* Player functions for saving/loading, modifying the humanoid identity, manipulating the inventory. [Documentation](https://github.com/BopenStarbound/BopenStarbound/tree/main/doc/lua/BopenStarbound)
 * Character swapping (rewrite from StarExtensions, currently command-only: `/swap name` case-insensitive, only substring required)
 * Custom user input support with a keybindings menu (rewrite from StarExtensions)
 * Positional Voice Chat that works on completely vanilla servers, uses Opus for crisp, HD audio (rewrite from StarExtensions)
@@ -77,7 +77,7 @@ Note: Not every function from [StarExtensions](https://github.com/StarExtensions
 * The Skybox's sun now matches the system type you're currently in.
   * Previously generated planets will not have this feature and will display the default sun.
   * Modded system types require a patch to display their custom sun.
-  * You can also access the skybox sun scale and its default ray colors. For more details see, [sky.config.patch](https://github.com/OpenStarbound/OpenStarbound/blob/main/assets/opensb/sky.config.patch).
+  * You can also access the skybox sun scale and its default ray colors. For more details see, [sky.config.patch](https://github.com/BopenStarbound/BopenStarbound/blob/main/assets/opensb/sky.config.patch).
 
 [Discord](https://discord.gg/f8B5bWy3bA)
 
@@ -231,30 +231,30 @@ LD_LIBRARY_PATH="$LD_LIBRARY_PATH:./" padsp ./starbound "$@"`
  * Run `cd vcpkg && ./bootstrap-vcpkg.sh`
  * Lastly, run ``` export VCPKG_ROOT=~/vcpkg && export PATH=$VCPKG_ROOT:$PATH ```
  * This last command makes vcpkg added to the current terminal path. This lasts only while the terminal is active, and will have to be rerun for new terminal instances.
-* Download the source code [here](https://github.com/OpenStarbound/OpenStarbound/archive/refs/heads/main.zip). This is the current code in main. Unpack the code to your downloads folder. 
-* Unpack the zip, and open it up. Navigate to OpenStarbound-main/source using the terminal -> `cd ~/Downloads/OpenStarbound-main`. Then navigate to the source folder, using `cd source`.
+* Download the source code [here](https://github.com/BopenStarbound/BopenStarbound/archive/refs/heads/main.zip). This is the current code in main. Unpack the code to your downloads folder. 
+* Unpack the zip, and open it up. Navigate to BopenStarbound-main/source using the terminal -> `cd ~/Downloads/BopenStarbound-main`. Then navigate to the source folder, using `cd source`.
   <details>
    <summary>If using an Arm Mac</summary>
 
     * While in the source folder in your terminal, run ` cmake --preset macos-arm-release `. This will get dependencies.
-    * After that command has finished, run ` cmake --build --preset macos-arm-release `. Wait for this to finish, then go to Finder. Navigate to the OpenStarbound-main folder using Finder. 
+    * After that command has finished, run ` cmake --build --preset macos-arm-release `. Wait for this to finish, then go to Finder. Navigate to the BopenStarbound-main folder using Finder. 
     * There will be a folder called <b>dist</b>. Inside dist will be your game files, but you still need to do a few more things to run it.
-    * First, in the OpenStarbound-main folder, there will be lib. Open lib, and open the osx folder. Inside is libsteam_api.dylib. Copy this file, and paste it into OpenStarbound-main/dist, so that it is in the same directory as the game files. 
-    * Navigate back to OpenStarbound-main/lib/osx, and open up the folder arm64. Here, rename libdiscord_game_sdk.dylib to discord_game_sdk.dylib. The name must be that, or else the game won't be able to load. 
-    * Grab the packed.pak file from your current Starbound install. It will be located in the assets folder. Copy that file into OpenStarbound-main/assets.
-    * Make a new file called sbinit.config (Make sure it is .config, not .somethingelse), and copy and paste in the sbinit.config text from above, located right underneath the title Building. Place sbinit.config inside OpenStarbound-main/dist. To make a new file, open the program called TextEdit on your mac, paste in the sbinit.config text from above, and click File (located at the very top of your screen), then click Save. It will prompt you, asking where to save it. Save As: sbinit.config, Where: Navigate to OpenStarbound-main/dist. Find the file you just saved, and rename it to get rid of the wrong extension, making sure the full name and extension looks like sbinit.config.
+    * First, in the BopenStarbound-main folder, there will be lib. Open lib, and open the osx folder. Inside is libsteam_api.dylib. Copy this file, and paste it into BopenStarbound-main/dist, so that it is in the same directory as the game files. 
+    * Navigate back to BopenStarbound-main/lib/osx, and open up the folder arm64. Here, rename libdiscord_game_sdk.dylib to discord_game_sdk.dylib. The name must be that, or else the game won't be able to load. 
+    * Grab the packed.pak file from your current Starbound install. It will be located in the assets folder. Copy that file into BopenStarbound-main/assets.
+    * Make a new file called sbinit.config (Make sure it is .config, not .somethingelse), and copy and paste in the sbinit.config text from above, located right underneath the title Building. Place sbinit.config inside BopenStarbound-main/dist. To make a new file, open the program called TextEdit on your mac, paste in the sbinit.config text from above, and click File (located at the very top of your screen), then click Save. It will prompt you, asking where to save it. Save As: sbinit.config, Where: Navigate to BopenStarbound-main/dist. Find the file you just saved, and rename it to get rid of the wrong extension, making sure the full name and extension looks like sbinit.config.
     * You can now run the game by double clicking on the file called starbound in dist/. If it says unverified developer, open up the same folder where the game is in in the terminal. ` xattr -d com.apple.quarantine starbound `, which will get rid of the lock on the file. If that doesn't work, run ` sudo spctl --master-disable ` to allow all unverified apps. 
   </details>
   <details>
     <summary>If using an Intel Mac</summary>
 
      * While in the source folder in your terminal, run ` cmake --preset macos-release `. This will get dependencies.
-     * After that command has finished, run ` cmake --build --preset macos-release `. Wait for this to finish, then go to Finder. Navigate to the OpenStarbound-main folder using Finder. 
+     * After that command has finished, run ` cmake --build --preset macos-release `. Wait for this to finish, then go to Finder. Navigate to the BopenStarbound-main folder using Finder. 
      * There will be a folder called <b>dist</b>. Inside dist will be your game files, but you still need to do a few more things to run it.
-     * First, in the OpenStarbound-main folder, there will be lib. Open lib, and open the osx folder. Inside is libsteam_api.dylib. Copy this file, and paste it into OpenStarbound-main/dist, so that it is in the same directory as the game files. 
-     * Navigate back to OpenStarbound-main/lib/osx, and open up the folder x64. Here, rename libdiscord_game_sdk.dylib to discord_game_sdk.dylib. The name must be that, or else the game won't be able to load. 
-     * Grab the packed.pak file from your current Starbound install. It will be located in the assets folder. Copy that file into OpenStarbound-main/assets.
-     * Make a new file called sbinit.config (Make sure it is .config, not .somethingelse), and copy and paste in the sbinit.config text from above, located right underneath the title Building. Place sbinit.config inside OpenStarbound-main/dist. To make a new file, open the program called TextEdit on your mac, paste in the sbinit.config text from above, and click File (located at the very top of your screen), then click Save. It will prompt you, asking where to save it. Save As: sbinit.config, Where: Navigate to OpenStarbound-main/dist. Find the file you just saved, and rename it to get rid of the wrong extension, making sure the full name and extension looks like sbinit.config.
+     * First, in the BopenStarbound-main folder, there will be lib. Open lib, and open the osx folder. Inside is libsteam_api.dylib. Copy this file, and paste it into BopenStarbound-main/dist, so that it is in the same directory as the game files. 
+     * Navigate back to BopenStarbound-main/lib/osx, and open up the folder x64. Here, rename libdiscord_game_sdk.dylib to discord_game_sdk.dylib. The name must be that, or else the game won't be able to load. 
+     * Grab the packed.pak file from your current Starbound install. It will be located in the assets folder. Copy that file into BopenStarbound-main/assets.
+     * Make a new file called sbinit.config (Make sure it is .config, not .somethingelse), and copy and paste in the sbinit.config text from above, located right underneath the title Building. Place sbinit.config inside BopenStarbound-main/dist. To make a new file, open the program called TextEdit on your mac, paste in the sbinit.config text from above, and click File (located at the very top of your screen), then click Save. It will prompt you, asking where to save it. Save As: sbinit.config, Where: Navigate to BopenStarbound-main/dist. Find the file you just saved, and rename it to get rid of the wrong extension, making sure the full name and extension looks like sbinit.config.
      * You can now run the game by double clicking on the file called starbound in dist/. If it says unverified developer, open up the same folder where the game is in in the terminal. ` xattr -d com.apple.quarantine starbound `, which will get rid of the lock on the file. If that doesn't work, run ` sudo spctl --master-disable ` to allow all unverified apps. 
 
   </details>

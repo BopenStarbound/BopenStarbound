@@ -1574,7 +1574,7 @@ void UniverseServer::acceptConnection(UniverseConnection connection, Maybe<HostA
     connection.packetSocket().setNetRules(LegacyVersion);
 
   auto protocolResponse = make_shared<ProtocolResponsePacket>();
-  protocolResponse->setCompressionMode(PacketCompressionMode::Enabled); // Signal that we're OpenStarbound
+  protocolResponse->setCompressionMode(PacketCompressionMode::Enabled); // Signal that we're BopenStarbound
   if (protocolRequest->requestProtocolVersion != StarProtocolVersion) {
     Logger::warn("UniverseServer: client connection aborted, unsupported protocol version {}, supported version {}",
         protocolRequest->requestProtocolVersion, StarProtocolVersion);
@@ -2041,7 +2041,7 @@ Maybe<WorkerPoolPromise<WorldServerThreadPtr>> UniverseServer::shipWorldPromise(
 
       if (!shipWorld) {
         Logger::info("UniverseServer: Creating new client ship world {}", clientShipWorldId);
-        shipWorld = make_shared<WorldServer>(Vec2U(2048, 2048), File::ephemeralFile());
+        shipWorld = make_shared<WorldServer>(Vec2U(2048, 2048), false, false, File::ephemeralFile());
         auto& species = clientContext->playerSpecies();
         auto shipStructure = WorldStructure(speciesShips.get(species).first());
         shipStructure = shipWorld->setCentralStructure(shipStructure);

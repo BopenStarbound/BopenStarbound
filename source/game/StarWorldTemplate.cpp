@@ -12,8 +12,8 @@
 
 namespace Star {
 
-WorldTemplate::WorldTemplate(Vec2U const& size) : WorldTemplate() {
-  m_geometry = size;
+WorldTemplate::WorldTemplate(Vec2U const& size, bool const& xWrap, bool const& yWrap) : WorldTemplate() {
+  m_geometry = WorldGeometry(size, xWrap, yWrap);
 }
 
 WorldTemplate::WorldTemplate(CelestialCoordinate const& celestialCoordinate, CelestialDatabasePtr const& celestialDatabase)
@@ -29,7 +29,7 @@ WorldTemplate::WorldTemplate(CelestialCoordinate const& celestialCoordinate, Cel
 
   m_skyParameters = SkyParameters(celestialCoordinate, celestialDatabase);
   m_seed = m_celestialParameters->seed();
-  m_geometry = WorldGeometry(m_worldParameters->worldSize);
+  m_geometry = WorldGeometry(m_worldParameters->worldSize, m_worldParameters->xWrap, m_worldParameters->yWrap);
 
   if (auto terrestrialParameters = as<TerrestrialWorldParameters>(m_worldParameters))
     m_layout = make_shared<WorldLayout>(WorldLayout::buildTerrestrialLayout(*terrestrialParameters, m_seed));
@@ -49,7 +49,7 @@ WorldTemplate::WorldTemplate(VisitableWorldParametersConstPtr const& worldParame
   m_worldParameters = worldParameters;
   m_skyParameters = skyParameters;
   m_seed = seed;
-  m_geometry = WorldGeometry(m_worldParameters->worldSize);
+  m_geometry = WorldGeometry(m_worldParameters->worldSize, m_worldParameters->xWrap, m_worldParameters->yWrap);
 
   if (auto terrestrialParameters = as<TerrestrialWorldParameters>(m_worldParameters))
     m_layout = make_shared<WorldLayout>(WorldLayout::buildTerrestrialLayout(*terrestrialParameters, seed));
@@ -67,7 +67,7 @@ WorldTemplate::WorldTemplate(Json const& store) : WorldTemplate() {
   m_skyParameters = SkyParameters(store.get("skyParameters"));
 
   m_seed = store.getUInt("seed");
-  m_geometry = WorldGeometry(jsonToVec2U(store.get("size")));
+  m_geometry = WorldGeometry(jsonToVec2U(store.get("size")), m_worldParameters ? m_worldParameters->xWrap : false, m_worldParameters ? m_worldParameters->yWrap : false);
   if (auto regionData = store.opt("regionData"))
     m_layout = make_shared<WorldLayout>(regionData.take());
 
@@ -133,6 +133,13 @@ String WorldTemplate::worldName() const {
 
 Vec2U WorldTemplate::size() const {
   return m_geometry.size();
+}
+
+bool WorldTemplate::wrapsX() const {
+  return m_geometry.wrapsX();
+}
+bool WorldTemplate::wrapsY() const {
+  return m_geometry.wrapsY();
 }
 
 float WorldTemplate::surfaceLevel() const {
@@ -260,7 +267,7 @@ List<WorldTemplate::Dungeon> WorldTemplate::dungeons() const {
         uint32_t dungeonOffset = staticRandomU32Range(0, m_geometry.width(), m_seed, layer.layerBaseHeight);
         for (auto const& dp : enumerateIterator(layer.dungeons)) {
           dungeonList.append({dp.first, layer.layerBaseHeight, (int)dungeonOffset, layer.dungeonXVariance, false, true});
-          dungeonOffset = (dungeonOffset + dungeonSpacing) % m_geometry.width();
+          dungeonOffset = m_geometry.xwrap((int)(dungeonOffset + dungeonSpacing));
         }
       }
     };
@@ -278,7 +285,7 @@ List<WorldTemplate::Dungeon> WorldTemplate::dungeons() const {
 }
 
 WorldTemplate::BlockInfo WorldTemplate::blockInfo(int x, int y) const {
-  return getBlockInfo(m_geometry.xwrap(x), y);
+  return getBlockInfo(m_geometry.xwrap(x), m_geometry.ywrap(y));
 }
 
 WorldTemplate::BlockInfo WorldTemplate::blockBiomeInfo(int x, int y) const {
@@ -347,13 +354,13 @@ WorldTemplate::BlockInfo WorldTemplate::blockBiomeInfo(int x, int y) const {
 }
 
 bool WorldTemplate::isOutside(int x, int y) const {
-  return !getBlockInfo(m_geometry.xwrap(x), y).terrain;
+  return !getBlockInfo(m_geometry.xwrap(x), m_geometry.ywrap(y)).terrain;
 }
 
 bool WorldTemplate::isOutside(RectI const& region) const {
   for (int x = region.xMin(); x < region.xMax(); ++x) {
     for (int y = region.yMin(); y < region.yMax(); ++y) {
-      if (getBlockInfo(m_geometry.xwrap(x), y).terrain)
+      if (getBlockInfo(m_geometry.xwrap(x), m_geometry.ywrap(y)).terrain)
         return false;
     }
   }
@@ -361,11 +368,11 @@ bool WorldTemplate::isOutside(RectI const& region) const {
 }
 
 BiomeIndex WorldTemplate::blockBiomeIndex(int x, int y) const {
-  return getBlockInfo(m_geometry.xwrap(x), y).blockBiomeIndex;
+  return getBlockInfo(m_geometry.xwrap(x), m_geometry.ywrap(y)).blockBiomeIndex;
 }
 
 BiomeIndex WorldTemplate::environmentBiomeIndex(int x, int y) const {
-  return getBlockInfo(m_geometry.xwrap(x), y).environmentBiomeIndex;
+  return getBlockInfo(m_geometry.xwrap(x), m_geometry.ywrap(y)).environmentBiomeIndex;
 }
 
 BiomeConstPtr WorldTemplate::biome(BiomeIndex biomeIndex) const {
@@ -377,11 +384,11 @@ BiomeConstPtr WorldTemplate::biome(BiomeIndex biomeIndex) const {
 }
 
 BiomeConstPtr WorldTemplate::blockBiome(int x, int y) const {
-  return biome(blockBiomeIndex(m_geometry.xwrap(x), y));
+  return biome(blockBiomeIndex(m_geometry.xwrap(x), m_geometry.ywrap(y)));
 }
 
 BiomeConstPtr WorldTemplate::environmentBiome(int x, int y) const {
-  return biome(environmentBiomeIndex(m_geometry.xwrap(x), y));
+  return biome(environmentBiomeIndex(m_geometry.xwrap(x), m_geometry.ywrap(y)));
 }
 
 MaterialHue WorldTemplate::biomeMaterialHueShift(BiomeIndex biomeIndex, MaterialId material) const {
@@ -489,12 +496,17 @@ void WorldTemplate::addPotentialBiomeItems(int x, int y, PotentialBiomeItems& it
 
 
 WorldTemplate::PotentialBiomeItems WorldTemplate::potentialBiomeItemsAt(int x, int y) const {
-  if (!m_layout || y <= 0 || y >= (int)m_geometry.height() - 1)
+  if (!m_layout)
+    return {};
+  if (!m_geometry.wrapsX() && (x <= 0 || x >= (int)m_geometry.width() - 1))
+    return {};
+  if (!m_geometry.wrapsY() && (y <= 0 || y >= (int)m_geometry.height() - 1))
     return {};
   x = m_geometry.xwrap(x);
+  y = m_geometry.ywrap(y);
 
   auto blockBiome = [this](int x, int y) -> Biome const* {
-    BiomeIndex index = blockBiomeIndex(m_geometry.xwrap(x), y);
+    BiomeIndex index = blockBiomeIndex(m_geometry.xwrap(x), m_geometry.ywrap(y));
     if (index == NullBiomeIndex)
       return nullptr;
     return m_layout->getBiome(index).get();
@@ -523,10 +535,13 @@ WorldTemplate::PotentialBiomeItems WorldTemplate::potentialBiomeItemsAt(int x, i
 }
 
 List<BiomeItemPlacement> WorldTemplate::validBiomeItems(int x, int y, PotentialBiomeItems potentialBiomeItems) const {
-  if (y <= 0 || y >= (int)m_geometry.height() - 1)
+  if (!m_geometry.wrapsX() && (x <= 0 || x >= (int)m_geometry.width() - 1))
+    return {};
+  if (!m_geometry.wrapsY() && (y <= 0 || y >= (int)m_geometry.height() - 1))
     return {};
 
   x = m_geometry.xwrap(x);
+  y = m_geometry.ywrap(y);
 
   auto block = getBlockInfo(x, y);
 
@@ -568,7 +583,7 @@ float WorldTemplate::threatLevel() const {
 }
 
 uint64_t WorldTemplate::seedFor(int x, int y) const {
-  return staticRandomU64(m_seed, m_geometry.xwrap(x), y, "Block");
+  return staticRandomU64(m_seed, m_geometry.xwrap(x), m_geometry.ywrap(y), "Block");
 }
 
 WorldTemplate::WorldTemplate() {
@@ -578,7 +593,7 @@ WorldTemplate::WorldTemplate() {
   m_customTerrainBlendWeight = m_templateConfig.getFloat("customTerrainBlendWeight");
 
   m_blockCache.setMaxSize(m_templateConfig.getInt("blockCacheSize"));
-  m_geometry = Vec2U(2048, 2048);
+  m_geometry = WorldGeometry();
   m_seed = Random::randu64();
 }
 

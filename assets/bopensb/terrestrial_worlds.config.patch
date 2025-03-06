@@ -1,0 +1,7 @@
+{
+  "planetDefaults" : {
+    "worldEdgeForceRegions" : "Top",
+    "xWrap": true,
+    "yWrap": false
+  }
+}

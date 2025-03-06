@@ -67,7 +67,7 @@ public:
   };
 
   // Creates a blank world with the given size
-  WorldTemplate(Vec2U const& size);
+  WorldTemplate(Vec2U const& size, bool const& xWrap, bool const& yWrap);
   // Creates a world from the given visitable celestial object.
   WorldTemplate(CelestialCoordinate const& celestialCoordinate, CelestialDatabasePtr const& celestialDatabase);
   // Creates a world from a bare VisitableWorldParameters structure
@@ -90,6 +90,9 @@ public:
   String worldName() const;
 
   Vec2U size() const;
+  
+  bool wrapsX() const;
+  bool wrapsY() const;
 
   // The average (ish) surface level for this world, off of which terrain
   // generators modify the surface height.

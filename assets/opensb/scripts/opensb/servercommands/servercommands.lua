@@ -1,5 +1,5 @@
 local commands = {}
-local logHelp = "Available OpenStarbound server commands:\n"
+local logHelp = "Available BopenStarbound server commands:\n"
 local userHelp = logHelp .. "^cyan;"
 local adminHelp = userHelp
 
@@ -87,7 +87,7 @@ function command(commandName, connectionId, args)
   if command then
     local success, ret = pcall(command.func, connectionId, table.unpack(args))
     if not success then
-      sb.logError("Error in OpenStarbound server command /%s: %s", commandName, ret)
+      sb.logError("Error in BopenStarbound server command /%s: %s", commandName, ret)
       return "command error: " .. ret
     else
       return ret

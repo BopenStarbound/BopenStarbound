@@ -6,7 +6,7 @@ using namespace Star;
 
 TEST(TileSectorArrayTest, All) {
   typedef TileSectorArray<int, 32> TileArray;
-  TileArray tileSectorArray({100, 100}, -1);
+  TileArray tileSectorArray({100, 100}, true, false, -1);
 
   EXPECT_TRUE(tileSectorArray.sectorValid(TileArray::Sector(1, 1)));
   EXPECT_TRUE(tileSectorArray.sectorValid(TileArray::Sector(3, 3)));

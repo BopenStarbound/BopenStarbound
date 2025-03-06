@@ -199,7 +199,7 @@ bool WirePane::sendEvent(InputEvent const& event) {
 }
 
 WireConnector::SwingResult WirePane::swing(WorldGeometry const& geometry, Vec2F pos, FireMode mode) {
-  pos = geometry.xwrap(pos);
+  pos = geometry.wrap(pos);
 
   if (m_worldClient->isTileProtected((Vec2I)pos)) {
     m_connecting = false;

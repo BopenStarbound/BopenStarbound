@@ -217,6 +217,7 @@ void Object::init(World* world, EntityId entityId, EntityMode mode) {
   }
 
   m_xTilePosition.set(world->geometry().xwrap((int)m_xTilePosition.get()));
+  m_yTilePosition.set(world->geometry().ywrap((int)m_yTilePosition.get()));
 
   // Compute all the relevant animation information after the final orientation
   // has been selected and after the script is initialized

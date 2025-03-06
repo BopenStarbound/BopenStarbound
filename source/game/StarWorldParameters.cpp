@@ -39,10 +39,13 @@ VisitableWorldParameters::VisitableWorldParameters(Json const& store) {
   disableDeathDrops = store.getBool("disableDeathDrops", false);
   terraformed = store.getBool("terraformed", false);
   worldEdgeForceRegions = WorldEdgeForceRegionTypeNames.getLeft(store.getString("worldEdgeForceRegions", "None"));
+  xWrap = store.getBool("xWrap",true);
+  yWrap = store.getBool("yWrap",false);
 }
 
 Json VisitableWorldParameters::store() const {
-  return JsonObject{{"typeName", typeName},
+  return JsonObject{
+      {"typeName", typeName},
       {"threatLevel", threatLevel},
       {"worldSize", jsonFromVec2U(worldSize)},
       {"gravity", gravity},
@@ -54,7 +57,10 @@ Json VisitableWorldParameters::store() const {
       {"beamUpRule", BeamUpRuleNames.getRight(beamUpRule)},
       {"disableDeathDrops", disableDeathDrops},
       {"terraformed", terraformed},
-      {"worldEdgeForceRegions", WorldEdgeForceRegionTypeNames.getRight(worldEdgeForceRegions)}};
+      {"worldEdgeForceRegions", WorldEdgeForceRegionTypeNames.getRight(worldEdgeForceRegions)},
+      {"xWrap", xWrap},
+      {"yWrap", yWrap}
+  };
 }
 
 void VisitableWorldParameters::read(DataStream& ds) {
@@ -71,6 +77,8 @@ void VisitableWorldParameters::read(DataStream& ds) {
   ds >> disableDeathDrops;
   ds >> terraformed;
   ds >> worldEdgeForceRegions;
+  ds >> xWrap;
+  ds >> yWrap;
 }
 
 void VisitableWorldParameters::write(DataStream& ds) const {
@@ -87,6 +95,8 @@ void VisitableWorldParameters::write(DataStream& ds) const {
   ds << disableDeathDrops;
   ds << terraformed;
   ds << worldEdgeForceRegions;
+  ds << xWrap;
+  ds << yWrap;
 }
 
 TerrestrialWorldParameters::TerrestrialWorldParameters(Json const& store) : VisitableWorldParameters(store) {
@@ -604,7 +614,9 @@ TerrestrialWorldParametersPtr generateTerrestrialWorldParameters(String const& t
   parameters->globalDirectives = config.opt("globalDirectives").apply(jsonToDirectivesList);
   parameters->beamUpRule = BeamUpRuleNames.getLeft(config.getString("beamUpRule", "Surface"));
   parameters->disableDeathDrops = config.getBool("disableDeathDrops", false);
-  parameters->worldEdgeForceRegions = WorldEdgeForceRegionTypeNames.getLeft(config.getString("worldEdgeForceRegions", "Top"));
+  parameters->worldEdgeForceRegions = WorldEdgeForceRegionTypeNames.getLeft(config.getString("worldEdgeForceRegions", "None"));
+  parameters->xWrap = config.getBool("xWrap",true);
+  parameters->yWrap = config.getBool("yWrap",false);
 
   parameters->weatherPool = biomeDatabase->biomeWeathers(primaryBiome, seed, threatLevel);
 
@@ -663,6 +675,8 @@ AsteroidsWorldParametersPtr generateAsteroidsWorldParameters(uint64_t seed) {
   parameters->blendSize = asteroidsConfig.getFloat("blendSize");
   parameters->asteroidBiome = biome;
   parameters->ambientLightLevel = jsonToColor(asteroidsConfig.get("ambientLightLevel"));
+  parameters->xWrap = asteroidsConfig.getBool("xWrap",true);
+  parameters->yWrap = asteroidsConfig.getBool("yWrap",true);
 
   return parameters;
 }
@@ -688,6 +702,8 @@ FloatingDungeonWorldParametersPtr generateFloatingDungeonWorldParameters(String 
   parameters->beamUpRule = BeamUpRuleNames.getLeft(worldConfig.getString("beamUpRule", "Surface"));
   parameters->disableDeathDrops = worldConfig.getBool("disableDeathDrops", false);
   parameters->worldEdgeForceRegions = WorldEdgeForceRegionTypeNames.getLeft(worldConfig.getString("worldEdgeForceRegions", "Top"));
+  parameters->xWrap = worldConfig.getBool("xWrap",true);
+  parameters->yWrap = worldConfig.getBool("yWrap",false);
 
   parameters->dungeonBaseHeight = static_cast<int>(worldConfig.getInt("dungeonBaseHeight"));
   parameters->dungeonSurfaceHeight = static_cast<int>(worldConfig.getInt("dungeonSurfaceHeight", parameters->dungeonBaseHeight));

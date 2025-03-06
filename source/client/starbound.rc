@@ -7,12 +7,12 @@ BEGIN
     BLOCK "040904E4"
     BEGIN
       VALUE "CompanyName", "Chucklefish LTD"
-      VALUE "FileDescription", "OpenStarbound"
+      VALUE "FileDescription", "BopenStarbound"
       VALUE "FileVersion", "1.0"
       VALUE "InternalName", "starbound"
       VALUE "LegalCopyright", "Chucklefish LTD"
       VALUE "OriginalFilename", "starbound.exe"
-      VALUE "ProductName", "OpenStarbound"
+      VALUE "ProductName", "BopenStarbound"
       VALUE "ProductVersion", "1.0"
     END
   END

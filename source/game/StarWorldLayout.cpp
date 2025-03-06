@@ -389,7 +389,7 @@ List<RectI> WorldLayout::playerStartSearchRegions() const {
 
 List<WorldLayout::RegionWeighting> WorldLayout::getWeighting(int x, int y) const {
   List<RegionWeighting> weighting;
-  WorldGeometry geometry(m_worldSize);
+  WorldGeometry geometry(m_worldSize,true,false);
 
   auto cellWeighting = [&](WorldLayer const& layer, size_t cellIndex, int x) -> float {
     int xMin = 0;
@@ -965,7 +965,7 @@ void WorldLayout::finalize(Color mainSkyColor) {
 }
 
 pair<size_t, int> WorldLayout::findContainingCell(WorldLayer const& layer, int x) const {
-  x = WorldGeometry(m_worldSize).xwrap(x);
+  x = WorldGeometry(m_worldSize,true,false).xwrap(x);
   auto xi = std::lower_bound(layer.boundaries.begin(), layer.boundaries.end(), x);
   return {xi - layer.boundaries.begin(), x};
 }

@@ -25,7 +25,7 @@ public:
   static int const MaximumEntityBoundBox;
 
   // beginIdSpace and endIdSpace is the *inclusive* range for new enittyIds.
-  EntityMap(Vec2U const& worldSize, EntityId beginIdSpace, EntityId endIdSpace);
+  EntityMap(Vec2U const& worldSize, bool const& xWrap, bool const& yWrap, EntityId beginIdSpace, EntityId endIdSpace);
 
   // Get the next free id in the entity id space.
   EntityId reserveEntityId();

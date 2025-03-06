@@ -1,0 +1,14 @@
+{
+
+  "challengerooms" : {
+    "worldEdgeForceRegions" : "None",
+    "xWrap": true,
+    "yWrap": true
+  },
+  
+  "playerstation" : {
+    "worldEdgeForceRegions" : "None",
+    "xWrap": true,
+    "yWrap": true
+  }
+}
